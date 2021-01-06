@@ -3,25 +3,17 @@ const { Tag, Product, ProductTag } = require("../../models");
 
 // The `/api/tags` endpoint
 
+// GET ROUTE
 router.get("/", (req, res) => {
   // find all tags
   Tag.findAll({
-    attributes: [
-      'id',
-      'tag_name'
-  ],
+    attributes: ["id", "tag_name"],
     include: [
       {
         model: Product,
-        attributes: [
-        'id',
-        'product_name',
-        'price',
-        'stock',
-        'category_id'
-      ],
+        attributes: ["id", "product_name", "price", "stock", "category_id"],
         through: ProductTag,
-        as: 'products',
+        as: "products",
       },
     ],
   })
@@ -32,48 +24,56 @@ router.get("/", (req, res) => {
     });
 });
 
+// GET ROUTE
 router.get("/:id", (req, res) => {
   // find a single tag by its `id`
-
   Tag.findOne({
     where: {
-      id: req.params.id
+      id: req.params.id,
     },
     include: [
       {
         model: Product,
-        attributes: [
-          'id',
-          'product_name',
-          'price',
-          'stock',
-          'category_id'
-        ],
+        attributes: ["id", "product_name", "price", "stock", "category_id"],
         through: ProductTag,
-        as: 'products'
+        as: "products",
+      },
+    ],
+  })
+    .then((dbTagData) => {
+      if (!dbTagData) {
+        res
+          .status(404)
+          .json({ message: "There was no tag found with this id." });
+        return;
       }
-    ]
-  })
-  .then(dbTagData => {
-    if (!dbTagData) {
-      res.status(404).json({ message: 'There was no tag found wiht this id.' });
-      return;
-    }
-    res.json(dbTagData);
-  })
-  .catch(err => {
-    console.log(err);
-    res.status(500).json(err);
-  })});
-
-router.post("/", (req, res) => {
-  // create a new tag
+      res.json(dbTagData);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
+// POST ROUTE
+router.post("/", (req, res) => {
+  // Create a new tag
+  Tag.create({
+    tag_name: req.body.tag_name,
+  })
+    .then((dbTagData) => res.json(dbTagData))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+// PUT ROUTE
 router.put("/:id", (req, res) => {
   // update a tag's name by its `id` value
 });
 
+// DELETE ROUTE
 router.delete("/:id", (req, res) => {
   // delete on tag by its `id` value
 });
