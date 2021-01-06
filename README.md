@@ -32,3 +32,4 @@ This challenge is to build the back end for an e-commerce site. I will take a wo
 ## Walk Through
 
 ## License
+* MIT
